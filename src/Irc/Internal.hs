@@ -102,6 +102,7 @@ listen h = forever $ do
     if ping s then pong s else eval (clean s)
   where
     clean     = drop 1 . dropWhile (/= ':') . drop 1
+    ping :: String -> Bool
     ping x    = "PING :" `isPrefixOf` x
     pong x    = write "PONG" (':' : drop 6 x)
 
@@ -166,6 +167,7 @@ liftAction a s = do
     r <- io (a s)
     p r h (chan conf)
         where
+          p :: String -> Handle -> String -> Irc ()
           p [] _ _ = return ()
           p r h c = io $ hPrintf h "PRIVMSG %s\r\n" (c ++ " :" ++ r)
 
